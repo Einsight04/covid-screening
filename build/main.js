@@ -35,39 +35,90 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var fs_1 = require("fs");
+var _a = require('fs'), readFileSync = _a.readFileSync, writeFileSync = _a.writeFileSync;
 var puppeteer = require('puppeteer');
-var phone = puppeteer.devices['iPhone X'];
-function addStr(str, index, stringToAdd) {
-    return str.substring(0, index) + stringToAdd + str.substring(index, str.length);
-}
-var file = (0, fs_1.readFileSync)('html/boilerplate.html', 'utf-8');
-console.log(file.length);
-var date1 = "testifdasadsng testing";
-var date2 = "remofdsafadsved";
-var dateOneLength = date1.length;
-file = (addStr(file, 93462, date1));
-file = (addStr(file, 93537 + dateOneLength, date2));
-(0, fs_1.writeFileSync)('html/index.html', file);
-puppeteer.launch({ headless: true }).then(function (browser) { return __awaiter(void 0, void 0, void 0, function () {
-    var page;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, browser.newPage()];
+var moment = require('moment');
+(function () { return __awaiter(void 0, void 0, void 0, function () {
+    function addStr(str, index, stringToAdd) {
+        return str.substring(0, index) + stringToAdd + str.substring(index, str.length);
+    }
+    var browser, _a, Client, Intents, client;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0: return [4 /*yield*/, puppeteer.launch({
+                    headless: true,
+                    defaultViewport: {
+                        width: 414,
+                        height: 896,
+                        isMobile: true,
+                    }
+                })];
             case 1:
-                page = _a.sent();
-                return [4 /*yield*/, page.emulate(phone)];
+                browser = _b.sent();
+                _a = require("discord.js"), Client = _a.Client, Intents = _a.Intents;
+                client = new Client({
+                    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
+                });
+                client.on("ready", function () {
+                    console.log("Now online!");
+                });
+                client.on("messageCreate", function (message) { return __awaiter(void 0, void 0, void 0, function () {
+                    var file, year, month, day, timeNow, timeEnd, date1, date2, dateOneLength, page;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                if (!message.content.startsWith("covid")) return [3 /*break*/, 7];
+                                console.log('worked');
+                                file = readFileSync('html/boilerplate.html', 'utf-8');
+                                moment.updateLocale('en', {
+                                    meridiem: function (hour, minute, isLowercase) {
+                                        if (hour >= 12)
+                                            return isLowercase ? 'p.m.' : 'P.M.';
+                                        else
+                                            return isLowercase ? 'a.m.' : 'A.M.';
+                                    }
+                                });
+                                year = moment(new Date()).format('YYYY');
+                                month = moment(new Date()).format('MMMM');
+                                day = moment(new Date()).format('D');
+                                timeNow = moment(new Date()).format('h:mm a');
+                                timeEnd = moment().add(1, 'hours').format('h:mm a');
+                                date1 = "Valid ".concat(month, " ").concat(day, ", ").concat(year);
+                                date2 = "from ".concat(timeNow, " to ").concat(timeEnd);
+                                dateOneLength = date1.length;
+                                file = (addStr(file, 93462, date1));
+                                file = (addStr(file, 93537 + dateOneLength, date2));
+                                return [4 /*yield*/, writeFileSync('html/index.html', file)];
+                            case 1:
+                                _a.sent();
+                                return [4 /*yield*/, new Promise(function (r) { return setTimeout(r, 25); })];
+                            case 2:
+                                _a.sent();
+                                return [4 /*yield*/, browser.newPage()];
+                            case 3:
+                                page = _a.sent();
+                                return [4 /*yield*/, page.goto("http://localhost:63342/covid-screening/html/index.html?_ijt=673a5gp7sr6johd04p5uljun3o&_ij_reload=RELOAD_ON_SAVE")];
+                            case 4:
+                                _a.sent();
+                                return [4 /*yield*/, page.screenshot({ path: 'screenshots/screenshot.png' })];
+                            case 5:
+                                _a.sent();
+                                message.channel.send({
+                                    files: ['./screenshots/screenshot.png']
+                                });
+                                return [4 /*yield*/, page.close()];
+                            case 6:
+                                _a.sent();
+                                _a.label = 7;
+                            case 7: return [2 /*return*/];
+                        }
+                    });
+                }); });
+                return [4 /*yield*/, client.login(process.env.TOKEN)];
             case 2:
-                _a.sent();
-                return [4 /*yield*/, page.goto('http://localhost:63342/covid-screening/html/index.html?_ijt=673a5gp7sr6johd04p5uljun3o&_ij_reload=RELOAD_ON_SAVE')];
-            case 3:
-                _a.sent();
-                return [4 /*yield*/, page.screenshot({ path: 'screenshots/screenshot.png' })];
-            case 4:
-                _a.sent();
+                _b.sent();
                 return [2 /*return*/];
         }
     });
-}); });
+}); })();
 //# sourceMappingURL=main.js.map
