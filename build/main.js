@@ -36,15 +36,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var _a = require('fs'), readFileSync = _a.readFileSync, writeFileSync = _a.writeFileSync;
+var _b = require("discord.js"), Client = _b.Client, Intents = _b.Intents;
 var puppeteer = require('puppeteer');
 var moment = require('moment');
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     function addStr(str, index, stringToAdd) {
         return str.substring(0, index) + stringToAdd + str.substring(index, str.length);
     }
-    var browser, _a, Client, Intents, client;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var browser, client;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0: return [4 /*yield*/, puppeteer.launch({
                     headless: true,
                     defaultViewport: {
@@ -54,8 +55,7 @@ var moment = require('moment');
                     }
                 })];
             case 1:
-                browser = _b.sent();
-                _a = require("discord.js"), Client = _a.Client, Intents = _a.Intents;
+                browser = _a.sent();
                 client = new Client({
                     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
                 });
@@ -67,8 +67,7 @@ var moment = require('moment');
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
-                                if (!message.content.startsWith("covid")) return [3 /*break*/, 7];
-                                console.log('worked');
+                                if (!(message.content.toLowerCase() === "covid")) return [3 /*break*/, 7];
                                 file = readFileSync('html/boilerplate.html', 'utf-8');
                                 moment.updateLocale('en', {
                                     meridiem: function (hour, minute, isLowercase) {
@@ -91,7 +90,7 @@ var moment = require('moment');
                                 return [4 /*yield*/, writeFileSync('html/index.html', file)];
                             case 1:
                                 _a.sent();
-                                return [4 /*yield*/, new Promise(function (r) { return setTimeout(r, 25); })];
+                                return [4 /*yield*/, new Promise(function (r) { return setTimeout(r, 50); })];
                             case 2:
                                 _a.sent();
                                 return [4 /*yield*/, browser.newPage()];
@@ -116,7 +115,7 @@ var moment = require('moment');
                 }); });
                 return [4 /*yield*/, client.login(process.env.TOKEN)];
             case 2:
-                _b.sent();
+                _a.sent();
                 return [2 /*return*/];
         }
     });

@@ -1,9 +1,15 @@
 const {readFileSync, writeFileSync} = require('fs');
+const {Client, Intents} = require("discord.js");
 const puppeteer = require('puppeteer');
 const moment = require('moment');
 
 
 (async () => {
+    function addStr(str: string, index: number, stringToAdd: any) {
+        return str.substring(0, index) + stringToAdd + str.substring(index, str.length);
+    }
+
+
     const browser = await puppeteer.launch({
         headless: true,
         defaultViewport: {
@@ -13,26 +19,18 @@ const moment = require('moment');
         }
     });
 
-    const {Client, Intents} = require("discord.js");
-
-    function addStr(str: string, index: number, stringToAdd: any) {
-        return str.substring(0, index) + stringToAdd + str.substring(index, str.length);
-    }
 
     const client = new Client({
         intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
     });
+
 
     client.on("ready", () => {
         console.log("Now online!");
     })
 
     client.on("messageCreate", async (message: { content: string; channel: { send: (arg0: { files: string[] }) => void; }; }) => {
-        if (message.content.startsWith("covid")) {
-
-            console.log('worked')
-
-
+        if (message.content.toLowerCase() === "covid") {
             let file = readFileSync('html/boilerplate.html', 'utf-8');
 
             moment.updateLocale('en', {
@@ -60,7 +58,7 @@ const moment = require('moment');
 
             await writeFileSync('html/index.html', file)
 
-            await new Promise(r => setTimeout(r, 25));
+            await new Promise(r => setTimeout(r, 50));
 
             const page = await browser.newPage();
             await page.goto("http://localhost:63342/covid-screening/html/index.html?_ijt=673a5gp7sr6johd04p5uljun3o&_ij_reload=RELOAD_ON_SAVE");
@@ -71,7 +69,6 @@ const moment = require('moment');
             });
 
             await page.close();
-
         }
     });
 
